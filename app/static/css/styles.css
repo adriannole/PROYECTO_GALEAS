@@ -1,0 +1,95 @@
+/* 🎨 Estilos Dark Mode - styles.css */
+
+:root {
+    --background: #121212;
+    --card-bg: #1e1e1e;
+    --text: #ffffff;
+    --primary: #777777;
+    --secondary: #007c7c;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+h2, h4 {
+    color: var(--primary);
+    text-align: center;
+}
+
+label {
+    font-weight: bold;
+}
+
+.form-control, .form-select {
+    background: #222;
+    color: var(--text);
+    border: 1px solid var(--secondary);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 5px var(--primary);
+}
+
+.btn-primary {
+    background: var(--primary);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--secondary);
+    color: black;
+}
+
+/* Tablas de resultado */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #222;
+}
+
+th, td {
+    border: 1px solid var(--secondary);
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: var(--primary);
+}
+
+td {
+    background: #333;
+}
+
+/* Animación sutil en botones */
+button {
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* Efecto de Fade-in */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+    animation: fadeIn 0.8s ease-in-out;
+}

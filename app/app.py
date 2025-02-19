@@ -4,13 +4,12 @@ import numpy as np
 app = Flask(__name__)
 
 def simplex(c, A, b, tipo):
-    """ Resuelve el problema de programación lineal usando el método Simplex paso a paso """
+    """ Resuelve el problema de programación lineal usando el método Simplex """
     num_vars = len(c)
     num_restricciones = len(A)
 
-    # Si es maximización, multiplicamos la función objetivo por -1
     if tipo == "max":
-        c = [-x for x in c]
+        c = [-x for x in c]  # Convertimos a problema de minimización
 
     # Crear la tabla del método Simplex
     tabla = np.zeros((num_restricciones + 1, num_vars + num_restricciones + 1))
@@ -63,9 +62,8 @@ def simplex(c, A, b, tipo):
             fila = np.where(col == 1)[0][0]
             solucion[i] = tabla[fila, -1]
 
-    # ⚠️ CORRECCIÓN: Invertir el signo si es maximización
-    valor_optimo = tabla[-1, -1] if tipo == "max" else -tabla[-1, -1]
-
+    valor_optimo = round(tabla[-1, -1] if tipo == "max" else -tabla[-1, -1], 2)
+    
     return valor_optimo, solucion, pasos
 
 @app.route('/')
@@ -76,27 +74,28 @@ def index():
 def resolver():
     try:
         tipo = request.form['tipo']
-        c = [float(request.form['c1']), float(request.form['c2'])]
+        num_variables = int(request.form['num_variables'])
         num_restricciones = int(request.form['num_restricciones'])
 
+        c = [float(request.form[f'c{i}']) for i in range(num_variables)]
         A = []
         b = []
+
         for i in range(num_restricciones):
-            a1 = float(request.form[f'a1_{i}'])
-            a2 = float(request.form[f'a2_{i}'])
+            restriccion = [float(request.form[f'a{i}_{j}']) for j in range(num_variables)]
             b_valor = float(request.form[f'b_{i}'])
             desigualdad = request.form[f'des_{i}']
 
             if desigualdad == ">=":
-                A.append([-a1, -a2])
-                b.append(-b_valor)
-            else:
-                A.append([a1, a2])
-                b.append(b_valor)
+                restriccion = [-x for x in restriccion]
+                b_valor = -b_valor
+
+            A.append(restriccion)
+            b.append(b_valor)
 
         resultado, solucion, pasos = simplex(c, A, b, tipo)
 
-        return render_template('resultado.html', resultado=resultado, solucion=solucion, pasos=pasos)
+        return render_template('resultado.html', resultado=resultado, solucion=solucion, pasos=pasos, num_variables=num_variables)
 
     except Exception as e:
         return f"Error en la resolución: {e}"
