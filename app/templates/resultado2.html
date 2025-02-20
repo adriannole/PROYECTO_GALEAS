@@ -55,6 +55,16 @@
             display: inline-block;
             margin-top: 15px;
         }
+        .optimalidad {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -71,6 +81,7 @@
 
     <p class="resultado">El costo total mínimo de transporte: <strong>{{ costo_total }}</strong></p>
     <p class="degenerada">{{ degenerada|safe }}</p> <!-- Se usa |safe para interpretar el HTML -->
+    <p class="optimalidad">{{ optimalidad|safe }}</p> <!-- Mensaje de optimalidad -->
 
     <a href="/">Volver</a>
 </body>
