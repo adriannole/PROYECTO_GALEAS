@@ -18,13 +18,81 @@ def esquina_noroeste(supply, demand, cost_matrix):
             j += 1
     return allocation
 
+def menor_costo(supply, demand, cost_matrix):
+    supply = supply.copy()
+    demand = demand.copy()
+    allocation = np.zeros_like(cost_matrix)
+    
+    while np.any(supply > 0) and np.any(demand > 0):
+        min_cost_index = np.unravel_index(np.argmin(np.where((supply[:, None] > 0) & (demand > 0), cost_matrix, np.inf)), cost_matrix.shape)
+        i, j = min_cost_index
+        qty = min(supply[i], demand[j])
+        allocation[i, j] = qty
+        supply[i] -= qty
+        demand[j] -= qty
+    
+    return allocation
+
+def aproximacion_vogel(supply, demand, cost_matrix):
+    supply = supply.copy()
+    demand = demand.copy()
+    allocation = np.zeros_like(cost_matrix)
+    
+    while np.any(supply > 0) and np.any(demand > 0):
+        penalty_rows = []
+        penalty_cols = []
+        
+        # Cálculo de penalizaciones por fila
+        for i in range(len(supply)):
+            if supply[i] > 0:
+                row = cost_matrix[i, :]
+                row_valid = row[demand > 0]
+                if len(row_valid) > 1:
+                    sorted_row = np.sort(row_valid)
+                    penalty_rows.append(sorted_row[1] - sorted_row[0])
+                else:
+                    penalty_rows.append(0)
+            else:
+                penalty_rows.append(-1)
+
+        # Cálculo de penalizaciones por columna
+        for j in range(len(demand)):
+            if demand[j] > 0:
+                col = cost_matrix[:, j]
+                col_valid = col[supply > 0]
+                if len(col_valid) > 1:
+                    sorted_col = np.sort(col_valid)
+                    penalty_cols.append(sorted_col[1] - sorted_col[0])
+                else:
+                    penalty_cols.append(0)
+            else:
+                penalty_cols.append(-1)
+        
+        # Determinar si la penalización más alta está en fila o columna
+        max_penalty_row = np.max(penalty_rows)
+        max_penalty_col = np.max(penalty_cols)
+
+        if max_penalty_row >= max_penalty_col:
+            i = np.argmax(penalty_rows)
+            j = np.argmin(np.where(demand > 0, cost_matrix[i, :], np.inf))
+        else:
+            j = np.argmax(penalty_cols)
+            i = np.argmin(np.where(supply > 0, cost_matrix[:, j], np.inf))
+
+        qty = min(supply[i], demand[j])
+        allocation[i, j] = qty
+        supply[i] -= qty
+        demand[j] -= qty
+
+    return allocation
+
 def calcular_costo_total(allocation, cost_matrix):
     return np.sum(allocation * cost_matrix)
 
 def es_solucion_degenerada(allocation, filas, columnas):
-    celdas_asignadas = np.count_nonzero(allocation)  # Cuenta las celdas ocupadas
-    celdas_requeridas = filas + columnas - 1  # Regla de degeneración m + n - 1
-
+    celdas_asignadas = np.count_nonzero(allocation)
+    celdas_requeridas = filas + columnas - 1
+    
     explicacion = f"🔎 <strong>Cálculo de degeneración:</strong><br>"
     explicacion += f"- Se asignaron <strong>{celdas_asignadas}</strong> celdas con valores distintos de cero.<br>"
     explicacion += f"- Según la regla: m + n - 1 = {filas} + {columnas} - 1 = <strong>{celdas_requeridas}</strong>.<br>"
@@ -72,10 +140,15 @@ def resolver():
 
     if metodo == "Esquina Noroeste":
         solucion = esquina_noroeste(supply.copy(), demand.copy(), cost_matrix)
-        costo_total = calcular_costo_total(solucion, cost_matrix)
-        degenerada, mensaje_degenerada = es_solucion_degenerada(solucion, filas - 1, columnas - 1)
+    elif metodo == "Menor Costo":
+        solucion = menor_costo(supply.copy(), demand.copy(), cost_matrix)
+    elif metodo == "Aproximación de Vogel":
+        solucion = aproximacion_vogel(supply.copy(), demand.copy(), cost_matrix)
     else:
-        return "Método no implementado aún."
+        return "Método no implementado."
+
+    costo_total = calcular_costo_total(solucion, cost_matrix)
+    degenerada, mensaje_degenerada = es_solucion_degenerada(solucion, filas - 1, columnas - 1)
 
     return render_template("resultado2.html", solucion=solucion, metodo=metodo, costo_total=costo_total, degenerada=mensaje_degenerada)
 
