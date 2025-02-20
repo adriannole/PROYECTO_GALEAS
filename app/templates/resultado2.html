@@ -49,6 +49,11 @@
             font-size: 18px;
             font-weight: bold;
             color: #ff5722;
+            background: #ffe0b2;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -65,7 +70,7 @@
     </table>
 
     <p class="resultado">El costo total mínimo de transporte: <strong>{{ costo_total }}</strong></p>
-    <p class="degenerada">{{ degenerada }}</p>
+    <p class="degenerada">{{ degenerada|safe }}</p> <!-- Se usa |safe para interpretar el HTML -->
 
     <a href="/">Volver</a>
 </body>

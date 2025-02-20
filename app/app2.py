@@ -23,12 +23,18 @@ def calcular_costo_total(allocation, cost_matrix):
 
 def es_solucion_degenerada(allocation, filas, columnas):
     celdas_asignadas = np.count_nonzero(allocation)  # Cuenta las celdas ocupadas
-    celdas_requeridas = filas + columnas - 1  # Regla de m + n - 1
+    celdas_requeridas = filas + columnas - 1  # Regla de degeneración m + n - 1
+
+    explicacion = f"🔎 <strong>Cálculo de degeneración:</strong><br>"
+    explicacion += f"- Se asignaron <strong>{celdas_asignadas}</strong> celdas con valores distintos de cero.<br>"
+    explicacion += f"- Según la regla: m + n - 1 = {filas} + {columnas} - 1 = <strong>{celdas_requeridas}</strong>.<br>"
 
     if celdas_asignadas < celdas_requeridas:
-        return True, f"La solución es degenerada porque tiene {celdas_asignadas} asignaciones y debería tener al menos {celdas_requeridas}."
+        explicacion += "<span style='color:red; font-weight:bold;'>❌ La solución es degenerada</span> porque el número de celdas asignadas es menor al mínimo requerido."
+        return True, explicacion
     else:
-        return False, "La solución no es degenerada."
+        explicacion += "<span style='color:green; font-weight:bold;'>✅ La solución no es degenerada</span> porque cumple con el número mínimo de celdas asignadas."
+        return False, explicacion
 
 @app.route("/", methods=["GET", "POST"])
 def index():
