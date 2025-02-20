@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Método de Transporte</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin: 20px auto;
+            width: 80%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        td, th {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Método de Transporte</h1>
+    <form method="POST" action="/">
+        <label>Filas (Suministro): </label>
+        <input type="number" name="filas" min="1" required>
+        <label>Columnas (Demanda): </label>
+        <input type="number" name="columnas" min="1" required>
+        <button type="submit">Generar Tabla</button>
+    </form>
+
+    {% if filas and columnas %}
+    <form method="POST" action="/resolver">
+        <input type="hidden" name="filas" value="{{ filas }}">
+        <input type="hidden" name="columnas" value="{{ columnas }}">
+
+        <h2>Ingrese los costos</h2>
+        <table>
+            {% for i in range(filas-1) %}
+            <tr>
+                {% for j in range(columnas-1) %}
+                <td><input type="number" name="cost_{{ i }}_{{ j }}" required></td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Oferta (Suministro)</h2>
+        {% for i in range(filas-1) %}
+            <input type="number" name="supply_{{ i }}" required>
+        {% endfor %}
+
+        <h2>Demanda</h2>
+        {% for j in range(columnas-1) %}
+            <input type="number" name="demand_{{ j }}" required>
+        {% endfor %}
+
+        <br><br>
+        <label>Método:</label>
+        <select name="metodo">
+            <option>Esquina Noroeste</option>
+            <option>Menor Costo</option>
+            <option>Aproximación de Vogel</option>
+        </select>
+        <button type="submit">Resolver</button>
+    </form>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            margin: auto;
+            border-collapse: collapse;
+            width: 50%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+        td, th {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        a {
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            width: 150px;
+            margin: auto;
+        }
+        a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resultado - {{ metodo }}</h1>
+    <table>
+        {% for fila in solucion %}
+        <tr>
+            {% for valor in fila %}
+            <td>{{ valor }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="/">Volver</a>
+</body>
+</html>

@@ -9,7 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="container mt-5">
-    <h2 class="text-center">PROGRAMACION LINEAL - METODO SIMPLEX</h2>
+    <h2 class="text-center">PROGRAMACION LINEAL </h2>
 
     <form id="simplex-form" action="/resolver" method="post">
         <div class="mb-3">
@@ -34,6 +34,15 @@
 
         <div id="restricciones-container"></div>
 
+        <div class="mb-3">
+            <label>Selecciona el Método:</label>
+            <select name="metodo" class="form-select">
+                <option value="simplex">Simplex</option>
+                <option value="dos_fases">Dos Fases</option>
+                <option value="gran_m">Gran M</option>
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary mt-3">Resolver</button>
     </form>
 
@@ -44,12 +53,12 @@
                 let container = $("#funcion-objetivo-container");
                 container.html("");
 
-                let html = `<label>Función Objetivo:</label><div class="d-flex">`;
+                let html = '<label>Función Objetivo:</label><div class="d-flex">';
                 for (let i = 0; i < num_vars; i++) {
                     html += `<input type="number" step="any" name="c${i}" class="form-control w-25" required> X${i + 1}`;
                     if (i < num_vars - 1) html += " + ";
                 }
-                html += `</div>`;
+                html += '</div>';
                 container.append(html);
             });
 

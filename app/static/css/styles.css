@@ -4,7 +4,7 @@
     --background: #121212;
     --card-bg: #1e1e1e;
     --text: #ffffff;
-    --primary: #777777;
+    --primary: #929292;
     --secondary: #007c7c;
 }
 
@@ -28,6 +28,8 @@ h2, h4 {
     color: var(--primary);
     text-align: center;
 }
+
+
 
 label {
     font-weight: bold;
@@ -92,4 +94,17 @@ button:hover {
 
 .container {
     animation: fadeIn 0.8s ease-in-out;
+}
+
+
+h2 {
+    color: var(--text) !important; /* Asegura que el color del texto sea blanco */
+}
+
+h4 {
+    color: var(--text) !important; /* Asegura que el color del texto sea blanco */
+}
+
+h5 {
+    color: var(--text) !important; /* Asegura que el color del texto sea blanco */
 }
