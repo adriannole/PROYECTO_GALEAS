@@ -21,6 +21,15 @@ def esquina_noroeste(supply, demand, cost_matrix):
 def calcular_costo_total(allocation, cost_matrix):
     return np.sum(allocation * cost_matrix)
 
+def es_solucion_degenerada(allocation, filas, columnas):
+    celdas_asignadas = np.count_nonzero(allocation)  # Cuenta las celdas ocupadas
+    celdas_requeridas = filas + columnas - 1  # Regla de m + n - 1
+
+    if celdas_asignadas < celdas_requeridas:
+        return True, f"La solución es degenerada porque tiene {celdas_asignadas} asignaciones y debería tener al menos {celdas_requeridas}."
+    else:
+        return False, "La solución no es degenerada."
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -58,10 +67,11 @@ def resolver():
     if metodo == "Esquina Noroeste":
         solucion = esquina_noroeste(supply.copy(), demand.copy(), cost_matrix)
         costo_total = calcular_costo_total(solucion, cost_matrix)
+        degenerada, mensaje_degenerada = es_solucion_degenerada(solucion, filas - 1, columnas - 1)
     else:
         return "Método no implementado aún."
 
-    return render_template("resultado2.html", solucion=solucion, metodo=metodo, costo_total=costo_total)
+    return render_template("resultado2.html", solucion=solucion, metodo=metodo, costo_total=costo_total, degenerada=mensaje_degenerada)
 
 if __name__ == "__main__":
     app.run(debug=True)
