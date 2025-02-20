@@ -39,6 +39,12 @@
         a:hover {
             background: #0056b3;
         }
+        .resultado {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d9534f;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -52,6 +58,9 @@
         </tr>
         {% endfor %}
     </table>
+
+    <p class="resultado">El costo total mínimo de transporte: <strong>{{ costo_total }}</strong></p>
+
     <a href="/">Volver</a>
 </body>
 </html>

@@ -18,6 +18,9 @@ def esquina_noroeste(supply, demand, cost_matrix):
             j += 1
     return allocation
 
+def calcular_costo_total(allocation, cost_matrix):
+    return np.sum(allocation * cost_matrix)
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -35,7 +38,7 @@ def resolver():
     if filas == 0 or columnas == 0:
         return "Error: No se han ingresado filas o columnas válidas."
 
-    cost_matrix = np.zeros((filas, columnas))
+    cost_matrix = np.zeros((filas - 1, columnas - 1))
     supply = np.zeros(filas - 1)
     demand = np.zeros(columnas - 1)
 
@@ -54,10 +57,11 @@ def resolver():
 
     if metodo == "Esquina Noroeste":
         solucion = esquina_noroeste(supply.copy(), demand.copy(), cost_matrix)
+        costo_total = calcular_costo_total(solucion, cost_matrix)
     else:
         return "Método no implementado aún."
 
-    return render_template("resultado2.html", solucion=solucion, metodo=metodo)
+    return render_template("resultado2.html", solucion=solucion, metodo=metodo, costo_total=costo_total)
 
 if __name__ == "__main__":
     app.run(debug=True)
