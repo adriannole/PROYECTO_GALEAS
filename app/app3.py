@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 import networkx as nx
 import matplotlib.pyplot as plt
 import io
 import base64
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 
@@ -48,6 +50,50 @@ def graficar_red(G, ruta_optima=None):
     imagen = base64.b64encode(buf.read()).decode('utf-8')
     plt.close()
     return imagen
+
+@app.route('/descargar', methods=['POST'])
+def descargar():
+    try:
+        tipo_archivo = request.form['tipo_archivo']
+        ruta_optima = request.form.getlist('ruta_optima[]')
+        costo = request.form['costo']
+        imagen = request.form['imagen']
+
+        if tipo_archivo == 'pdf':
+            # Crear un archivo PDF en memoria
+            buffer = io.BytesIO()
+            p = canvas.Canvas(buffer, pagesize=letter)
+            p.drawString(100, 750, "Resultado de la Ruta Óptima en la Red")
+            p.drawString(100, 730, f"Ruta Óptima: {' -> '.join(ruta_optima)}")
+            p.drawString(100, 710, f"Costo Total: {costo}")
+
+            # Insertar la imagen en el PDF
+            imagen_bytes = base64.b64decode(imagen)
+            imagen_io = io.BytesIO(imagen_bytes)
+            p.drawImage(imagen_io, 100, 400, width=400, height=300)
+
+            p.showPage()
+            p.save()
+
+            buffer.seek(0)
+            return send_file(buffer, as_attachment=True, download_name='resultado.pdf', mimetype='application/pdf')
+
+        elif tipo_archivo == 'txt':
+            # Crear un archivo TXT en memoria
+            output = io.StringIO()
+            output.write("Resultado de la Ruta Óptima en la Red\n")
+            output.write(f"Ruta Óptima: {' -> '.join(ruta_optima)}\n")
+            output.write(f"Costo Total: {costo}\n")
+
+            buffer = io.BytesIO()
+            buffer.write(output.getvalue().encode('utf-8'))
+            buffer.seek(0)
+            return send_file(buffer, as_attachment=True, download_name='resultado.txt', mimetype='text/plain')
+
+    except Exception as e:
+        return f"Error al generar el archivo: {e}"
+
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():

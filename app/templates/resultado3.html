@@ -19,6 +19,20 @@
             <p>No hay una ruta disponible entre los nodos seleccionados.</p>
         {% endif %}
     </div>
+
+    <form action="/descargar" method="post">
+        <input type="hidden" name="ruta_optima[]" value="{{ ruta_optima }}">
+        <input type="hidden" name="costo" value="{{ costo }}">
+        <input type="hidden" name="imagen" value="{{ imagen }}">
+        
+        <label for="tipo_archivo">Descargar como:</label>
+        <select name="tipo_archivo" id="tipo_archivo">
+            <option value="pdf">PDF</option>
+            <option value="txt">TXT</option>
+        </select>
+        <button type="submit">Descargar</button>
+    </form>
+
     <a href="/">Volver</a>
 </body>
 </html>

@@ -83,6 +83,26 @@
     <p class="degenerada">{{ degenerada|safe }}</p> <!-- Se usa |safe para interpretar el HTML -->
     <p class="optimalidad">{{ optimalidad|safe }}</p> <!-- Mensaje de optimalidad -->
 
+    <form action="/descargar" method="post">
+        <input type="hidden" name="costo_total" value="{{ costo_total }}">
+        <input type="hidden" name="degenerada" value="{{ degenerada }}">
+        <input type="hidden" name="optimalidad" value="{{ optimalidad }}">
+        <input type="hidden" name="filas" value="{{ solucion|length }}">
+        <input type="hidden" name="columnas" value="{{ solucion[0]|length }}">
+        {% for fila in solucion %}
+            {% for valor in fila %}
+                <input type="hidden" name="solucion[]" value="{{ valor }}">
+            {% endfor %}
+        {% endfor %}
+        
+        <label for="tipo_archivo">Descargar como:</label>
+        <select name="tipo_archivo" id="tipo_archivo">
+            <option value="pdf">PDF</option>
+            <option value="txt">TXT</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Descargar</button>
+    </form>
+
     <a href="/">Volver</a>
 </body>
 </html>

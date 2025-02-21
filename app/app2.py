@@ -1,5 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 import numpy as np
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import io
 
 app = Flask(__name__)
 
@@ -139,6 +142,67 @@ def metodo_modi(allocation, cost_matrix):
     # Esto es un placeholder para la lógica completa del ciclo
 
     return False, allocation  # La solución no es óptima, pero se ajustó
+
+@app.route('/descargar', methods=['POST'])
+def descargar():
+    try:
+        tipo_archivo = request.form['tipo_archivo']
+        solucion = request.form.getlist('solucion[]')
+        costo_total = request.form['costo_total']
+        degenerada = request.form['degenerada']
+        optimalidad = request.form['optimalidad']
+        filas = int(request.form['filas'])
+        columnas = int(request.form['columnas'])
+
+        if tipo_archivo == 'pdf':
+            # Crear un archivo PDF en memoria
+            buffer = io.BytesIO()
+            p = canvas.Canvas(buffer, pagesize=letter)
+            p.drawString(100, 750, "Resultado del Método de Transporte")
+            p.drawString(100, 730, f"Costo Total: {costo_total}")
+
+            y = 710
+            p.drawString(100, y, "Asignaciones:")
+            y -= 20
+
+            for i in range(filas - 1):
+                for j in range(columnas - 1):
+                    p.drawString(100, y, f"Celda [{i+1}, {j+1}]: {solucion[i * (columnas - 1) + j]}")
+                    y -= 20
+
+            p.drawString(100, y, degenerada)
+            y -= 20
+            p.drawString(100, y, optimalidad)
+
+            p.showPage()
+            p.save()
+
+            buffer.seek(0)
+            return send_file(buffer, as_attachment=True, download_name='resultado.pdf', mimetype='application/pdf')
+
+        elif tipo_archivo == 'txt':
+            # Crear un archivo TXT en memoria
+            output = io.StringIO()
+            output.write("Resultado del Método de Transporte\n")
+            output.write(f"Costo Total: {costo_total}\n\n")
+            output.write("Asignaciones:\n")
+
+            for i in range(filas - 1):
+                for j in range(columnas - 1):
+                    output.write(f"Celda [{i+1}, {j+1}]: {solucion[i * (columnas - 1) + j]}\n")
+
+            output.write(f"\n{degenerada}\n")
+            output.write(f"\n{optimalidad}\n")
+
+            buffer = io.BytesIO()
+            buffer.write(output.getvalue().encode('utf-8'))
+            buffer.seek(0)
+            return send_file(buffer, as_attachment=True, download_name='resultado.txt', mimetype='text/plain')
+
+    except Exception as e:
+        return f"Error al generar el archivo: {e}"
+
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
