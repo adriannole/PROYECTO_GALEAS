@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado - Ruta Óptima</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles3.css') }}">
+</head>
+<body>
+    <h1>Resultado - Ruta Óptima</h1>
+    <div>
+        <img src="data:image/png;base64,{{ imagen }}" alt="Gráfico de la Red">
+    </div>
+    <div class="resultado">
+        {% if ruta_optima %}
+            <p>La ruta más óptima es: <strong>{{ ruta_optima|join(' -> ') }}</strong></p>
+            <p>Con un costo total de: <strong>{{ costo }}</strong></p>
+        {% else %}
+            <p>No hay una ruta disponible entre los nodos seleccionados.</p>
+        {% endif %}
+    </div>
+    <a href="/">Volver</a>
+</body>
+</html>

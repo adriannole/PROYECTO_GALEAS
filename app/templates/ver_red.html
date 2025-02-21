@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Red</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles3.css') }}">
+</head>
+<body>
+    <h1>Red Generada</h1>
+    <div>
+        <img src="data:image/png;base64,{{ imagen }}" alt="Gráfico de la Red">
+    </div>
+    <form method="POST" action="{{ url_for('resolver') }}">
+        <input type="hidden" name="nodos" value="{{ nodos|join(',') }}">
+        <input type="hidden" name="conexiones" value="{{ conexiones }}">
+        <input type="hidden" name="inicio" value="{{ inicio }}">
+        <input type="hidden" name="fin" value="{{ fin }}">
+        <button type="submit">Resolver Ruta Óptima</button>
+    </form>
+    <a href="/">Volver</a>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redes - Ingreso de Datos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles3.css') }}">
+</head>
+<body>
+    <h1>Ingreso de Datos para la Red</h1>
+    <form method="POST">
+        <label for="nodos">Ingrese los nodos (separados por comas):</label>
+        <input type="text" id="nodos" name="nodos" placeholder="Ej: A,B,C,D" required>
+        <br><br>
+        <label for="inicio">Nodo de inicio:</label>
+        <input type="text" id="inicio" name="inicio" required>
+        <br><br>
+        <label for="fin">Nodo final:</label>
+        <input type="text" id="fin" name="fin" required>
+        <br><br>
+        <h3>Ingrese los costos entre nodos:</h3>
+        <div id="conexiones"></div>
+        <br>
+        <button type="submit">Ver Red</button>
+    </form>
+
+    <script>
+        document.getElementById('nodos').addEventListener('input', function() {
+            const nodos = this.value.split(',');
+            let html = '';
+            for (let i = 0; i < nodos.length; i++) {
+                for (let j = 0; j < nodos.length; j++) {
+                    if (i !== j) {
+                        html += `<label for="costo_${nodos[i]}_${nodos[j]}">Costo entre ${nodos[i]} y ${nodos[j]}:</label>
+                                 <input type="number" id="costo_${nodos[i]}_${nodos[j]}" name="costo_${nodos[i]}_${nodos[j]}" step="0.1" min="0"><br>`;
+                    }
+                }
+            }
+            document.getElementById('conexiones').innerHTML = html;
+        });
+    </script>
+</body>
+</html>
