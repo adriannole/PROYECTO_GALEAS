@@ -46,6 +46,28 @@
         {% endfor %}
     </p>
 
+    <form action="/descargar" method="post">
+        <input type="hidden" name="resultado" value="{{ resultado }}">
+        {% for sol in solucion %}
+            <input type="hidden" name="solucion[]" value="{{ sol }}">
+        {% endfor %}
+        {% for hol in holguras %}
+            <input type="hidden" name="holguras[]" value="{{ hol }}">
+        {% endfor %}
+        {% for paso in pasos %}
+            <input type="hidden" name="pasos[]" value="{{ paso }}">
+        {% endfor %}
+        <input type="hidden" name="num_variables" value="{{ num_variables }}">
+        <input type="hidden" name="num_restricciones" value="{{ num_restricciones }}">
+        
+        <label for="tipo_archivo">Descargar como:</label>
+        <select name="tipo_archivo" id="tipo_archivo">
+            <option value="pdf">PDF</option>
+            <option value="txt">TXT</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Descargar</button>
+    </form>
+
     <a href="/" class="btn btn-primary">Volver</a>
 </body>
 </html>

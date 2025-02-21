@@ -1,5 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 import numpy as np
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import io
 
 app = Flask(__name__)
 
@@ -270,6 +273,71 @@ def resolver():
 
     except Exception as e:
         return f"Error en la resolución: {e}"
+
+@app.route('/descargar', methods=['POST'])
+def descargar():
+    try:
+        tipo_archivo = request.form['tipo_archivo']
+        resultado = request.form['resultado']
+        solucion = request.form.getlist('solucion[]')
+        holguras = request.form.getlist('holguras[]')
+        pasos = request.form.getlist('pasos[]')
+        num_variables = int(request.form['num_variables'])
+        num_restricciones = int(request.form['num_restricciones'])
+
+        if tipo_archivo == 'pdf':
+            # Crear un archivo PDF en memoria
+            buffer = io.BytesIO()
+            p = canvas.Canvas(buffer, pagesize=letter)
+            p.drawString(100, 750, "Resultado del Método Simplex")
+            p.drawString(100, 730, f"Valor Óptimo: {resultado}")
+
+            y = 710
+            for i in range(num_variables):
+                p.drawString(100, y, f"X{i+1} = {solucion[i]}")
+                y -= 20
+
+            for i in range(num_restricciones):
+                p.drawString(100, y, f"S{i+1} = {holguras[i]}")
+                y -= 20
+
+            p.drawString(100, y, "Pasos:")
+            y -= 20
+
+            for i, paso in enumerate(pasos):
+                p.drawString(100, y, f"Iteración {i+1}: {paso}")
+                y -= 20
+
+            p.showPage()
+            p.save()
+
+            buffer.seek(0)
+            return send_file(buffer, as_attachment=True, download_name='resultado.pdf', mimetype='application/pdf')
+
+        elif tipo_archivo == 'txt':
+            # Crear un archivo TXT en memoria
+            output = io.StringIO()
+            output.write("Resultado del Método Simplex\n")
+            output.write(f"Valor Óptimo: {resultado}\n")
+
+            for i in range(num_variables):
+                output.write(f"X{i+1} = {solucion[i]}\n")
+
+            for i in range(num_restricciones):
+                output.write(f"S{i+1} = {holguras[i]}\n")
+
+            output.write("Pasos:\n")
+            for i, paso in enumerate(pasos):
+                output.write(f"Iteración {i+1}: {paso}\n")
+
+            buffer = io.BytesIO()
+            buffer.write(output.getvalue().encode('utf-8'))
+            buffer.seek(0)
+            return send_file(buffer, as_attachment=True, download_name='resultado.txt', mimetype='text/plain')
+
+    except Exception as e:
+        return f"Error al generar el archivo: {e}"
+
 
 if __name__ == '__main__':
     app.run(debug=True)
