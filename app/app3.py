@@ -67,10 +67,6 @@ def descargar():
             p.drawString(100, 730, f"Ruta Óptima: {' -> '.join(ruta_optima)}")
             p.drawString(100, 710, f"Costo Total: {costo}")
 
-            # Insertar la imagen en el PDF
-            imagen_bytes = base64.b64decode(imagen)
-            imagen_io = io.BytesIO(imagen_bytes)
-            p.drawImage(imagen_io, 100, 400, width=400, height=300)
 
             p.showPage()
             p.save()
